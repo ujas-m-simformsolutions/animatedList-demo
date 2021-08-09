@@ -2,30 +2,53 @@ import 'package:animated_list_demo/text_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'fruits.dart';
 
+//https://medium.com/flutter-community/updating-data-in-an-animatedlist-in-flutter-9dbfb136e515
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  final _key = GlobalKey<FormState>();
   final listKey = GlobalKey<AnimatedListState>();
   TextEditingController controller = TextEditingController();
   TextEditingController indexController = TextEditingController();
-  List<String> text = [];
-  AnimationController animationController;
-  Animation<Offset> offsetAnimation;
+  List<Fruit> fruits = [];
+  late AnimationController animationController;
+  late Animation<double> offsetAnimation;
+  AnimationController? rotateController;
+  AnimationController? scaleController;
+  List<Fruit> fetchedList = [
+    Fruit(
+      name: 'Banana',
+      emoji: '🍌',
+    ),
+    Fruit(
+      name: 'Apple',
+      emoji: '🍎',
+    ),
+    Fruit(
+      name: 'Grape',
+      emoji: '🍇',
+    ),
+    Fruit(
+      name: 'Mango',
+      emoji: '🥭',
+    ),
+    Fruit(
+      name: 'Orange',
+      emoji: '🍊',
+    ),
+  ];
 
   void loadItems() {
-    final fetchedList = ['banana', 'apple', 'peach', 'mangoes', 'adsd'];
     var future = Future(() {});
     for (var i = 0; i < fetchedList.length; i++) {
       future = future.then((_) {
         return Future.delayed(Duration(milliseconds: 100), () {
-          text.add(fetchedList[i]);
-          listKey.currentState.insertItem(text.length - 1);
+          fruits.add(fetchedList[i]);
+          listKey.currentState!.insertItem(fruits.length - 1);
         });
       });
     }
@@ -37,21 +60,33 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
+// explain
   void removeElement(int index) {
-    listKey.currentState.removeItem(
+    Fruit removedElement = fruits.removeAt(index);
+    listKey.currentState!.removeItem(
       index,
-      (context, animation) => ScaleTransition(
-        scale: animation.drive(
-          Tween(begin: 0, end: 1),
+      (context, animation) => SlideTransition(
+        position: animation.drive(
+          Tween(
+            begin: Offset(1.0, 0.0),
+            end: Offset(0.0, 0.0),
+          ),
+        ),
+        child: TextCard(
+          fruit: removedElement,
+          removeFunction: (){},
         ),
       ),
-      duration: Duration(seconds: 0),
+      duration: Duration(seconds: 1),
     );
+  }
 
-    setState(() {
-      text.removeAt(index);
-    });
-    print(text);
+  void addElement() {
+    var random = math.Random().nextInt(4);
+
+    listKey.currentState!
+        .insertItem(random, duration: Duration(milliseconds: 500));
+    fruits.insert(random, fetchedList[random]);
   }
 
   @override
@@ -61,13 +96,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       duration: Duration(seconds: 1),
       vsync: this,
     )..forward();
-    offsetAnimation = Tween<Offset>(
-      begin: Offset(-0.5, 0.0),
-      end: Offset(0.5, 0.0),
-    ).animate(CurvedAnimation(
-      parent: animationController,
-      curve: Curves.easeInCubic,
-    ));
+    offsetAnimation =
+        Tween<double>(begin: -0.5, end: 0).animate(animationController);
+    rotateController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    )..repeat();
+    scaleController = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    )..repeat();
     loadItems();
   }
 
@@ -79,90 +117,67 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         appBar: AppBar(
           backgroundColor: Colors.green[400],
           title: Text('Animated List Demo'),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.sort_by_alpha),
+                onPressed: () async {
+                  animationController.reset();
+                  setState(() {
+                    fruits.sort((a, b) => a.name.compareTo(b.name));
+                  });
+                  await animationController.forward();
+                })
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: addElement,
+          child: Icon(Icons.add),
         ),
         resizeToAvoidBottomInset: false,
-        body: Form(
-          key: _key,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: TextFormField(
-                    controller: controller,
-                    decoration: InputDecoration(
-                      hintText: 'text',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.green),
+        body: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                child: AnimatedList(
+                  key: listKey,
+                  initialItemCount: fruits.length,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (context, index, animation) {
+                    return SlideTransition(
+                      position: animation.drive(
+                        Tween(
+                          begin: Offset(0.5, 0.0),
+                          end: Offset(0, 0.0),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(12.w),
-                  child: TextFormField(
-                    controller: indexController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      hintText: 'index',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.green),
+                      child: AnimatedBuilder(
+                        animation: offsetAnimation,
+                        builder: (context, child) {
+                          return Transform(
+                            transform: Matrix4.identity()
+                              ..setEntry(3, 2, 0.0002)
+                              ..rotateX(-1 * math.pi * offsetAnimation.value),
+                            alignment: Alignment.center,
+                            child: TextCard(
+                              fruit: fruits[index],
+                              removeFunction: () {
+                                removeElement(index);
+                              },
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    listKey.currentState.insertItem(
-                        int.parse(indexController.text) - 1,
-                        duration: Duration(seconds: 1));
-                    text.insert(
-                        int.parse(indexController.text) - 1, controller.text);
+                    );
                   },
-                  child: Text(
-                    'Add',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(primary: Colors.green),
                 ),
-                Container(
-                  //height: 300,
-                  child: AnimatedList(
-                    key: listKey,
-                    initialItemCount: text.length,
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (context, index, animation) {
-                      return SlideTransition(
-                        position: animation.drive(
-                          Tween(
-                            begin: Offset(0.5, 0.0),
-                            end: Offset(0, 0.0),
-                          ),
-                        ),
-                        child: Dismissible(
-                          key: UniqueKey(),
-                          child: TextCard(
-                            key: UniqueKey(),
-                            text: text[index],
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),
