@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'fruits.dart';
 
-//https://medium.com/flutter-community/updating-data-in-an-animatedlist-in-flutter-9dbfb136e515
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -59,8 +58,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       FocusNode(),
     );
   }
-
-// explain
   void removeElement(int index) {
     Fruit removedElement = fruits.removeAt(index);
     listKey.currentState!.removeItem(
