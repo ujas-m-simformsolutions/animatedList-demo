@@ -6,6 +6,6 @@ This is the example app from medium blog.
 
 ![](https://imgur.com/a/9BhLhP9)
 
-![](https://imgur.com/a/n9WFko6)
+![](https://github.com/ujas-m-simformsolutions/animatedList-demo/blob/master/demo_gif/2.gif)
 
-![](https://imgur.com/a/rID8Vh9)
+![](https://github.com/ujas-m-simformsolutions/animatedList-demo/blob/master/demo_gif/3.gif)
