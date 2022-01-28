@@ -1,11 +1,11 @@
 import 'package:animated_list_demo/fruits.dart';
 import 'package:flutter/material.dart';
 
-class TextCard extends StatelessWidget {
+class FruitCard extends StatelessWidget {
   final Fruit fruit;
-  final Function removeFunction;
+  final VoidCallback removeFunction;
 
-  TextCard({
+  FruitCard({
   required this.fruit,
   required this.removeFunction,
   });
@@ -50,7 +50,7 @@ class TextCard extends StatelessWidget {
                   Icons.close,
                   color: Colors.blueGrey,
                 ),
-                onPressed: removeFunction as void Function(),
+                onPressed: removeFunction,
               )
             ],
           ),

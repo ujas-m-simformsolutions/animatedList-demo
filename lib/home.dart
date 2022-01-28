@@ -1,4 +1,4 @@
-import 'package:animated_list_demo/text_card.dart';
+import 'package:animated_list_demo/fruit_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -11,13 +11,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
   final listKey = GlobalKey<AnimatedListState>();
-  TextEditingController controller = TextEditingController();
-  TextEditingController indexController = TextEditingController();
   List<Fruit> fruits = [];
-  late AnimationController animationController;
-  late Animation<double> offsetAnimation;
-  AnimationController? rotateController;
-  AnimationController? scaleController;
   List<Fruit> fetchedList = [
     Fruit(
       name: 'Banana',
@@ -53,11 +47,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
-  void tapAnywhere() {
-    FocusScope.of(context).requestFocus(
-      FocusNode(),
-    );
-  }
   void removeElement(int index) {
     Fruit removedElement = fruits.removeAt(index);
     listKey.currentState!.removeItem(
@@ -69,9 +58,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             end: Offset(0.0, 0.0),
           ),
         ),
-        child: TextCard(
+        child: FruitCard(
           fruit: removedElement,
-          removeFunction: (){},
+          removeFunction: () {},
         ),
       ),
       duration: Duration(seconds: 1),
@@ -89,93 +78,50 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      duration: Duration(seconds: 1),
-      vsync: this,
-    )..forward();
-    offsetAnimation =
-        Tween<double>(begin: -0.5, end: 0).animate(animationController);
-    rotateController = AnimationController(
-      duration: Duration(seconds: 1),
-      vsync: this,
-    )..repeat();
-    scaleController = AnimationController(
-      duration: Duration(seconds: 1),
-      vsync: this,
-    )..repeat();
     loadItems();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: tapAnywhere,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.green[400],
-          title: Text('Animated List Demo'),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.sort_by_alpha),
-                onPressed: () async {
-                  animationController.reset();
-                  setState(() {
-                    fruits.sort((a, b) => a.name.compareTo(b.name));
-                  });
-                  await animationController.forward();
-                })
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: addElement,
-          child: Icon(Icons.add),
-        ),
-        resizeToAvoidBottomInset: false,
-        body: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green[400],
+        title: Text('Animated List Demo'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: addElement,
+        child: Icon(Icons.add),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              child: AnimatedList(
+                key: listKey,
+                initialItemCount: fruits.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (context, index, animation) {
+                  return SlideTransition(
+                    position: animation.drive(
+                      Tween(
+                        begin: Offset(0.5, 0.0),
+                        end: Offset(0, 0.0),
+                      ),
+                    ),
+                    child: FruitCard(
+                      fruit: fruits[index],
+                      removeFunction: () => removeElement(index),
+                    ),
+                  );
+                },
               ),
-              Container(
-                child: AnimatedList(
-                  key: listKey,
-                  initialItemCount: fruits.length,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (context, index, animation) {
-                    return SlideTransition(
-                      position: animation.drive(
-                        Tween(
-                          begin: Offset(0.5, 0.0),
-                          end: Offset(0, 0.0),
-                        ),
-                      ),
-                      child: AnimatedBuilder(
-                        animation: offsetAnimation,
-                        builder: (context, child) {
-                          return Transform(
-                            transform: Matrix4.identity()
-                              ..setEntry(3, 2, 0.0002)
-                              ..rotateX(-1 * math.pi * offsetAnimation.value),
-                            alignment: Alignment.center,
-                            child: TextCard(
-                              fruit: fruits[index],
-                              removeFunction: () {
-                                removeElement(index);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );
