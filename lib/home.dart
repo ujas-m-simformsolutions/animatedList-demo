@@ -1,7 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:animated_list_demo/fruit_card.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+
 import 'fruits.dart';
 
 class Home extends StatefulWidget {
@@ -85,7 +87,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green[400],
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Text('Animated List Demo'),
       ),
       floatingActionButton: FloatingActionButton(

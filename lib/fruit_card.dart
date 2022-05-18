@@ -6,17 +6,15 @@ class FruitCard extends StatelessWidget {
   final VoidCallback removeFunction;
 
   FruitCard({
-  required this.fruit,
-  required this.removeFunction,
+    required this.fruit,
+    required this.removeFunction,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.symmetric(
-        horizontal: 20,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 20),
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
