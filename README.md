@@ -7,8 +7,7 @@ You can visit this [medium-blog](https://medium.com/@ujasthakkar54/animate-list-
 to get full explanation of the demo.
 
 Here are the demos from blog
-
 | On start | Add | Remove |
-|---|---|
-| <a href="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/1.gif"><img src="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/1.gif" width="320" height="700"/></a> | <a href="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/2.gif"><img src="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/2.gif" width="320" height="700"/></a> | <a href="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/3.gif"><img src="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/3.gif" width="320" height="700"/></a> |
+|---|---|---|
+| <a href="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/1.gif"><img src="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/1.gif" width="340" height="600"/></a> | <a href="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/2.gif"><img src="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/2.gif" width="340" height="600"/></a> | <a href="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/3.gif"><img src="https://raw.githubusercontent.com/ujas-m-simformsolutions/animatedlist-demo/master/assets/3.gif" width="340" height="600"/></a> |
 
